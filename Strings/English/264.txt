@@ -1,0 +1,2 @@
+	Updating the database. 
+This may take several minutes.

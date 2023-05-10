@@ -1,0 +1,2 @@
+	Your ranking has decreased to
+number <++> in <++> score attack.

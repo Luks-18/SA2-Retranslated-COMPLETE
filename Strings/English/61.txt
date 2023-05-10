@@ -1,0 +1,1 @@
+	Mostrar em 60Hz.

@@ -1,0 +1,2 @@
+	Passwords must be at least 5
+characters, maximum is 12.

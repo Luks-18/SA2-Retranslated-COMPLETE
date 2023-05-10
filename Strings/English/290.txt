@@ -1,0 +1,3 @@
+	Mail was sent to
+your E-mail address. 
+Please check your mail.

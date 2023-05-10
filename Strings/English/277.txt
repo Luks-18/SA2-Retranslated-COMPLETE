@@ -1,0 +1,2 @@
+	Your rank has decreased to
+number <++> in emblem ranking.

@@ -1,0 +1,2 @@
+	Unable to connect to server. 
+Server authentication failed.

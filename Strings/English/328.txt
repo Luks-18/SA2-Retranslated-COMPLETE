@@ -1,0 +1,2 @@
+	Press B Button to go
+back to list screen.

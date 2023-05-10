@@ -1,0 +1,2 @@
+	Your rank has increased to
+number <++> in total ranking.

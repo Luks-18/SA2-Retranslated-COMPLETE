@@ -1,0 +1,2 @@
+	12 characters maximum
+length for user name.

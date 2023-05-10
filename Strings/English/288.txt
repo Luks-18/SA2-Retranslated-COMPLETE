@@ -1,0 +1,2 @@
+	Do you want to receive
+your password via E-mail?

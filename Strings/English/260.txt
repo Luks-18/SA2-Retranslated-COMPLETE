@@ -1,0 +1,3 @@
+	While connected to the network, you will be charged a telephone
+fee.
+Do you want to connect?

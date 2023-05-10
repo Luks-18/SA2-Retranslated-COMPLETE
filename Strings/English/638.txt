@@ -1,0 +1,1 @@
+	Definir limite de tempo  LIGADO/DESLIGADO.

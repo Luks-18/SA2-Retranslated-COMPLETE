@@ -1,0 +1,1 @@
+	Número máximo de saves atingido.
