@@ -10,8 +10,16 @@ extern "C"
 	DataPointer(int, HudControl, 0x0174AFE0);
 	DataPointer(int, SplitScreenControl, 0x01DD946C);
 	DataPointer(int, WinHappens, 0x0174B002);
-	int WaitFrameIntro = 0;
-	int WaitFrameWaza = 0;
+	DataPointer(__int16, MenuOrGame, 0x1934BE0);
+	DataPointer(__int16, Timer, 0x174B03C);
+	int WaitFrameIntro = 0;//オープニングポーズ
+	int WaitFrameIntroChao = 0;//チャオ達とメタルとカオスゼロのイントロ（テキストなし）
+	int WaitFrameIntroAmy = 0;//エミーイントローはもっと長い
+	int WaitFrameWaza = 0;//一般的な技
+	int WaitFrameWaza2 = 0;//シャドウ技ボス
+	int WaitFrameWaza1P = 0;//一般的な技ボス
+	int WaitFrameWaza21P = 0;//シャドウ技ボス
+	int WaitFrameOmochao = 0;
 	char TextBuffer[1000];
 	/*case x:
 		displayText(3, "\n", 60, 1);
@@ -42,7 +50,7 @@ extern "C"
 
 
 
-
+	
 	int randVoice(int num)
 	{
 		switch (num)
@@ -395,7 +403,7 @@ extern "C"
 			displayText(3, "\aAre you sure?", 100, 1);
 			break;
 		case 1122:
-			displayText(3, "\aIt seems you've been\ncollecting a lot!", 120, 1);
+			displayText(3, "\aYou've collected a lot already!", 120, 1);
 			break;
 		case 1123:
 			displayText(3, "\aYou can see your emblems collected!", 120, 1);
@@ -490,66 +498,110 @@ extern "C"
 		case 1243:
 			displayText(3, "\aHmm, how cute!", 30, 1);
 			break;
-			case 1244:
-				displayText(3, "Playtime is over!", 30, 1);
-				break;
-			case 1245:
-				displayText(3, "Here I come...", 30, 1);
-				break;
-				
-			case 1246:
-				displayText(3, "Fall down!", 30, 1);
-				break;
-			case 1247:
-				displayText(3, "Hip...Drop!!", 30, 1);
-				break;
-			case 1248:
+		case 1244:
+			displayText(3, "\aPlaytime is over!", 30, 1);
+			break;
+		case 1245:
+			displayText(3, "\aHere I come...", 30, 1);
+			break;	
+		case 1246:
+			displayText(3, "\aFall down!", 30, 1);
+			break;
+		case 1247:
+			displayText(3, "\aHip...Drop!!", 30, 1);
+			break;
+		case 1248:
+			if (TwoPlayerMode)
+			{
 				HudControl = 0;
 				SplitScreenControl = 1;
-				strcpy_s(TextBuffer, "Eat this!");
+				strcpy_s(TextBuffer, "\aEat this!");
 				WaitFrameWaza = 1;
-				break;
-			case 1249:
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aEat this!");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1249:
+			if (TwoPlayerMode) 
+			{
 				HudControl = 0;
 				SplitScreenControl = 1;
-				strcpy_s(TextBuffer, "Black Wave!");
+				strcpy_s(TextBuffer, "\aBlack Wave!");
 				WaitFrameWaza = 1;
-				break;
-			case 1250:
-				HudControl = 0;
-				SplitScreenControl = 1;
-				strcpy_s(TextBuffer, "Take this one too!");
-				WaitFrameWaza = 1;
-				break;
-			case 1251:
-				HudControl = 0;
-				SplitScreenControl = 1;
-				strcpy_s(TextBuffer, "Charm Ray!");
-				WaitFrameWaza = 1;
-				break;
-				
-			case 1252:
-				HudControl = 0;
-				SplitScreenControl = 1;
-				strcpy_s(TextBuffer, "I won't let you get\nthe Master Emerald!");
-				WaitFrameIntro = 1;
-				
-				break;
-			case 1253:
-				HudControl = 0;
-				SplitScreenControl = 1;
-				strcpy_s(TextBuffer, "I won't lose to the likes of you!");
-				WaitFrameIntro = 1;
-
-				break;
-			case 1254:
-				SplitScreenControl = 1;
-				displayText(3, "\aHumpf, all bark and no bite...", 120, 1);
-				break;
-			case 1255:
-				SplitScreenControl = 1;
-				displayText(3, "\aAll the world jewels will be mine.", 160, 1);
-				break;
+			}
+			else 
+			{
+				strcpy_s(TextBuffer, "\aBlack Wave!");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1250:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aTake this one too!");
+			WaitFrameWaza = 1;
+			break;
+		case 1251:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aCharm Ray!");
+			WaitFrameWaza = 1;
+			break;		
+		case 1252:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI won't let you get\nthe Master Emerald!");
+			WaitFrameIntro = 1;		
+			break;
+		case 1253:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI won't lose to the likes of you!");
+			WaitFrameIntro = 1;
+			break;
+		case 1254:
+			SplitScreenControl = 1;
+			displayText(3, "\aHumpf, all bark and no bite...", 120, 1);
+			break;
+		case 1255:
+			SplitScreenControl = 1;
+			displayText(3, "\aAll of the world's gems are mine!", 160, 1);
+			break;
+		case 1256://DoubleStarWin
+			SplitScreenControl = 1;
+			displayText(3, "\aSorry, but you're no match for me.", 160, 1);
+			break;
+		case 1257://DoubleStarWin
+			SplitScreenControl = 1;
+			displayText(3, "\aHehe, looks like I'm one\nstep above than you.", 160, 1);
+			break;
+		case 1258://WonKnuxIntro
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aNo matter how much you try,\nthe result will be the same!");
+			WaitFrameIntro = 1;
+			break;
+		case 1259://WonRougeIntro
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI still won't go easy on you.");
+			WaitFrameIntro = 1;
+			break;
+		case 1260://LosingKnuxIntro
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI'm not holding back this time!");
+			WaitFrameIntro = 1;
+			break;
+		case 1261://LosingRougeIntro
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aThis time I'm serious!");
+			WaitFrameIntro = 1;
+			break;
 		case 1262:
 			displayText(3, "\aI got this match!", 60, 1);
 			break;
@@ -560,7 +612,7 @@ extern "C"
 			displayText(3, "\aNow we're one-to-one!", 50, 1);
 			break;
 		case 1265:
-			displayText(3, "\aI'll be the one to\nget the last one.", 60, 1);
+			displayText(3, "\aI'll be the one to get the last one.", 60, 1);
 			break;
 		case 1266:
 			displayText(3, "\aTwo more left.", 50, 1);
@@ -595,11 +647,104 @@ extern "C"
 		case 1287:
 			displayText(3, "\aThis area seems suspicious...", 40, 1);
 			break;
+		case 1295:
+			displayText(3, "\aOuch!", 40, 1);
+			break;
+		case 1296:
+			displayText(3, "\aGah... Darn it!", 40, 1);
+			break;
+		case 1297:
+			displayText(3, "\aGeez... Enough already!", 60, 1);
+			break;
 		case 1300:
 			displayText(3, "\aIs this it...?", 40, 1);
 			break;
 		case 1301:
 			displayText(3, "\aDarn it...", 40, 1);
+			break;
+		case 1310://Knuckles Alt Intro
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aHere we go!");
+				WaitFrameIntro = 1;
+
+			}
+			else
+			{
+				displayText(3, "\aHere we go!", 40, 1);
+			}
+			break;
+		case 1312:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aAlright!", 60, 1);
+			}
+			break;
+		case 1313:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aI've arrived!", 60, 1);
+			}
+			break;
+		case 1314:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aCiao!", 60, 1);
+			}
+			break;
+		case 1315:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aBye-bye!", 60, 1);
+			}
+			break;
+		case 1316:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aH-Hey!", 60, 1);
+			}
+			break;
+		case 1317:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aHey, wait up!", 60, 1);
+			}
+			break;
+		case 1321:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aOuuuch!", 120, 1);
+			}
 			break;
 		case 1322:
 			displayText(3, "\aI'll protect the Master Emerald!", 110, 1);
@@ -661,8 +806,19 @@ extern "C"
 		case 1460:
 			displayText(3, "\aHuff... Let's get going.", 120, 1);
 			break;
-		case 1461:
-			displayText(3, "\aWell then, who's gonna be the\nnext one I'm gonna wipe out?", 150, 1);
+		case 1461://Shadow Alt Intro
+			if (TwoPlayerMode) 
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aWell then, who's gonna be the\nnext one I'm gonna wipe out?");
+				WaitFrameIntro = 1;
+
+			}
+			else
+			{
+				displayText(3, "\aWell then, who's gonna be the\nnext one I'm gonna wipe out?", 150, 1);
+			}
 			break;
 		case 1462:
 			displayText(3, "\aAlright...Let's get going.", 150, 1);
@@ -688,6 +844,110 @@ extern "C"
 		case 1517:
 			displayText(3, "\aThere there...", 30, 1);
 			break;
+		case 1518:
+			displayText(3, "\aPlaytime is over.", 30, 1);
+			break;
+		case 1519:
+			displayText(3, "\aLet's go!", 30, 1);
+			break;
+		case 1520:
+			displayText(3, "\aHere I go!", 30, 1);
+			break;
+		case 1521:
+			displayText(3, "\aS p e e d   U p !", 30, 1);
+			break;
+		case 1522:
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aDisappear!");
+				WaitFrameWaza2 = 1;
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aDisappear!");
+				WaitFrameWaza21P = 1;
+			}
+			break;
+		case 1523:
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aS o n i c   W i n d !");
+				WaitFrameWaza = 1;
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aS o n i c   W i n d !");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1524:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aChaos Control!");
+			WaitFrameWaza2 = 1;
+			break;
+		case 1525:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aT i m e   S t o p !");
+			WaitFrameWaza = 1;
+			break;
+		case 1526:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aLet me show you our power gap.");
+			WaitFrameIntro = 1;
+			break;
+		case 1527:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aNow, let's begin!");
+			WaitFrameIntro = 1;
+			break;
+		case 1528:
+			SplitScreenControl = 1;
+			displayText(3, "\aHumph, a fake is still a fake after all.", 180, 1);
+			break;
+		case 1529:
+			SplitScreenControl = 1;
+			displayText(3, "\aH e y   g u y !  I'll play\nwith you some other time!", 180, 1);
+			break;
+		case 1530:
+			SplitScreenControl = 1;
+			displayText(3, "\aHumph, you have disappointed me.", 180, 1);
+			break;
+		case 1531:
+			SplitScreenControl = 1;
+			displayText(3, "\aWhat's wrong, impostor?\nGiving up already?", 180, 1);
+			break;
+		case 1532:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aNo matter how much you try,\nit's pointless.");
+			WaitFrameIntro = 1;
+			break;
+		case 1533:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aO k a y ,   C ' m o n !");
+			WaitFrameIntro = 1;
+			break;
+		case 1534:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aSoon enough, you'll get\nto see my true power.");
+			WaitFrameIntro = 1;
+			break;
+		case 1535:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aThis time I'm going all in!");
+			WaitFrameIntro = 1;
+			break;
 		case 1537:
 			displayText(3, "\aR e a d y...", 30, 1);
 			break;
@@ -697,20 +957,81 @@ extern "C"
 		case 1539:
 			displayText(3, "\aG O ! !", 30, 1);
 			break;
-			//case 1553:
-				//displayText(3, "\aBeleza!", 60, 1);
-				//break;
+		//case 1553:
+			//displayText(3, "\aBeleza!", 60, 1);
+			//break;
 		case 1552:
 			displayText(3, "\aAll right.", 60, 1);
 			break;
-			//case 1560:
-				//displayText(3, "\aNão me segura!", 30, 1);
-				//break;
+		//case 1560:
+			//displayText(3, "\aNão me segura!", 30, 1);
+			//break;
 		case 1564:
 			displayText(3, "\aUgh...! Maria...", 70, 1);
 			break;
 		case 1567:
-			displayText(3, "\aN o ...!", 60, 1);
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aN o ...!", 60, 1);
+			}
+			break;
+		case 1570:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aWhat...!?", 60, 1);
+			}
+			
+			break;
+		case 1572:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aIt's useless!", 60, 1);
+			}
+			break;
+		case 1577:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aL e t ' s   g o !", 60, 1);
+			}
+			
+			break;
+		case 1579:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aH e y   g u y !", 60, 1);
+			}
+			
+			break;
+		case 1581:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aH-Hey...!", 60, 1);
+			}
+			
 			break;
 		case 1576:
 			displayText(3, "\aI'll get revenge... on everyone!", 120, 1);
@@ -724,6 +1045,20 @@ extern "C"
 		case 1586:
 			displayText(3, "\aHumpf, child's play.", 120, 1);
 			break;
+		case 1587://Sonic Alt Intro
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aH e r e   w e   g o !");
+				WaitFrameIntro = 1;
+
+			}
+			else
+			{
+				displayText(3, "\aH e r e   w e   g o !", 120, 1);
+			}
+			break;
 		case 1588:
 			displayText(3, "\aI guess that's fitting for now.", 120, 1);
 			break;
@@ -734,7 +1069,14 @@ extern "C"
 			displayText(3, "\aHaven't I fully recovered yet...?", 120, 1);
 			break;
 		case 1593:
-			displayText(3, "\aY e s !", 60, 1);
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aY e s !", 60, 1);
+			}
 			break;
 		case 1594:
 			displayText(3, "\aHmph. Incompetent humans.", 180, 1);
@@ -766,6 +1108,10 @@ extern "C"
 		case 1603:
 			displayText(3, "\aTch!   N o t   m y   d a y ...", 160, 1);
 			break;
+		case 1604://Shadow Win against Amy/Metal
+			SplitScreenControl = 1;
+			displayText(3, "\aHumph, so that's as much\nas you have after all...", 180, 1);
+			break;
 		case 1605:
 			displayText(3, "\aH e y   g u y !   T a k e   c a r e!", 150, 1);
 			break;
@@ -781,29 +1127,207 @@ extern "C"
 		case 1610:
 			displayText(3, "\aThe party is over, you monster!", 180, 1);
 			break;
+		case 1613://Sonic Win against Amy/Metal
+			SplitScreenControl = 1;
+			displayText(3, "\aNobody can defeat me\nwhen it comes to running!", 180, 1);
+			break;
+		case 1632:
+			displayText(3, "\aHere I go, fox-boy!", 30, 1);
+			break;
+		case 1633:
+			displayText(3, "\aCharge complete!", 30, 1);
+			break;
+		case 1634:
+			displayText(3, "\aTake this, too!", 30, 1);
+			break;
+		case 1635:
+			displayText(3, "\aLaser, fire!", 30, 1);
+			break;
+		case 1636:
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aNow this!");
+				WaitFrameWaza = 1;
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aNow this!");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1637:
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aRocket Launcher, fire!");
+				WaitFrameWaza = 1;
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aRocket Launcher, fire!");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1638:
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aThis will finish you off!");
+				WaitFrameWaza = 1;
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aThis will finish you off!");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1639:
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aPower Laser, fire!");
+				WaitFrameWaza = 1;
+			}
+			else
+			{
+				strcpy_s(TextBuffer, "\aPower Laser, fire!");
+				WaitFrameWaza1P = 1;
+			}
+			break;
+		case 1640:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aDo you really think you can beat me?");
+			WaitFrameIntro = 1;
+			break;
+		case 1641:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI won't lose!");
+			WaitFrameIntro = 1;
+			break;
 		case 1642:
-			displayText(3, "\aIt's way too early for\nyou to win against me!", 160, 1);
+			if (TwoPlayerMode)
+			{
+				SplitScreenControl = 1;
+				displayText(3, "\aIt's way too early for\nyou to win against me!", 180, 1);
+			}
+			else
+			{
+				displayText(3, "\aIt's way too early for\nyou to win against me!", 180, 1);
+			}
+			break;
+		case 1643:
+			SplitScreenControl = 1;
+			displayText(3, "\aI did it! Victory is mine!", 160, 1);
+			break;
+		case 1644:
+			SplitScreenControl = 1;
+			displayText(3, "\aHo hohoho! Learned the lesson?", 160, 1);
+			break;
+		case 1645:
+			SplitScreenControl = 1;
+			displayText(3, "\aAs if I would ever lose\nto the likes of Eggman!", 160, 1);
+			break;
+		case 1646:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI'll make you realize your place!");
+			WaitFrameIntro = 1;
+			break;
+		case 1647:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aLet's settle this, one more time!");
+			WaitFrameIntro = 1;
+			break;
+		case 1648:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aThis time I'm going full-power!");
+			WaitFrameIntro = 1;
+			break;
+		case 1649:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aAlright, this time it will be different!");
+			WaitFrameIntro = 1;
 			break;
 		case 1661:
 			displayText(3, "\aIt's over if this keeps up...!", 60, 1);
 			break;
 		case 1660:
-			displayText(3, "\aYou...! Don't think you\ncan get away with this!", 140, 1);
+			displayText(3, "\aYou...! Don't think you\ncan get away with this!", 60, 1);
 			break;
 		case 1662:
-			displayText(3, "\aWhat?! There is not much power left!", 120, 1);
+			displayText(3, "\aWhat?! There is not much power left!", 60, 1);
 			break;
 		case 1663:
-			displayText(3, "\aMy machine is already at it's limit!", 70, 1);
+			displayText(3, "\aMy machine is already at it's limit!", 60, 1);
 			break;
 		case 1666:
-			displayText(3, "\aPower-Up!!!", 60, 1);
+			displayText(3, "\aPower-Up!", 60, 1);
 			break;
 		case 1667:
 			displayText(3, "\aHere I come!", 60, 1);
 			break;
 		case 1676:
 			displayText(3, "\aIs this as far as it goes...?", 120, 1);
+			break;
+		case 1685:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aBoost up!", 60, 1);
+			}
+			break;
+		case 1686:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aFarewell!", 60, 1);
+			}
+			break;
+		case 1687:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aI'll take the lead!", 60, 1);
+			}
+			break;
+		case 1688:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aWh-What in the world!?", 60, 1);
+			}
+			break;
+		case 1689:
+			if (TwoPlayerMode)
+			{
+
+			}
+			else
+			{
+				displayText(3, "\aOh! Wait for me!", 60, 1);
+			}
 			break;
 		case 1692:
 			displayText(3, "\aThe world is mine!", 100, 1);
@@ -845,13 +1369,25 @@ extern "C"
 			displayText(3, "\aI gotta work harder...", 120, 1);
 			break;
 		case 1715:
-			displayText(3, "\aHow's that! Are you giving up?", 100, 1);
+			if (TwoPlayerMode)
+			{
+				SplitScreenControl = 1;
+				displayText(3, "\aHow's that! Are you giving up?", 180, 1);
+			}
+			else
+			{
+				displayText(3, "\aHow's that! Are you giving up?", 100, 1);
+			}
+
 			break;
 		case 1726:
 			displayText(3, "\aNow there...", 30, 1);
 			break;
 		case 1729:
 			displayText(3, "\aGood boy!", 30, 1);
+			break;
+		case 1732:
+			displayText(3, "\aAlright, it's charged!", 30, 1);
 			break;
 		case 1735:
 			displayText(3, "\aHoohohohoho! Sonic! Come here\nif you want to save young girl's life!", 430, 1);
@@ -925,6 +1461,9 @@ extern "C"
 		case 1796:
 			displayText(3, "\aJust a little more, Sonic!\nHold on a bit!", 180, 1);
 			break;
+		case 1798:
+			displayText(3, "\aOh no... I lost him...", 180, 1);
+			break;
 		case 1799:
 			displayText(3, "\aI found the Emerald signal!\nWait on me, fox-boy!", 200, 1);
 			break;
@@ -939,6 +1478,9 @@ extern "C"
 			break;
 		case 1803:
 			displayText(3, "\aShut up, hold on a bit!\nLeave this to me!", 180, 1);
+			break;
+		case 1805:
+			displayText(3, "\aRunning out of gas at a\nmoment like this?! Ughhh! ", 180, 1);
 			break;
 		case 1806:
 			displayText(3, "\aInforming all police units in the city.\nFugitive is heading south. Block the\nmain roads and capture the fugitive!", 500, 1);
@@ -1117,8 +1659,18 @@ extern "C"
 		case 2065:
 			displayText(3, "\aI'll go wild.", 100, 1);
 			break;
-		case 2066:
-			displayText(3, "\aEvery single one of them\nis no match for me.", 160, 1);
+		case 2066://Eggman Alt Intro
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aEach and every one of them\nis no match for me.");
+				WaitFrameIntro = 1;
+			}
+			else
+			{
+				displayText(3, "\aEach and every one of them\nis no match for me.", 160, 1);
+			}
 			break;
 		case 2019:
 			displayText(3, "\aRouge! Collect the Chaos Emeralds before\nthe military group notices you!", 120, 1);
@@ -1177,20 +1729,17 @@ extern "C"
 		case 2084:
 			displayText(3, "\aEat this!", 50, 1);
 			break;
-		case 1638:
-			displayText(3, "\aThis will finish you off!", 60, 1);
-			break;
-			//case 1639:
-				//displayText(3, "\aAlzse", 60, 1);
-				//break;
 			//case 2091:
-				//displayText(3, "\aBig Foot do pelotão Aranha reportando ao HQ\nO fugitivo procurado foi localizado.\nIniciando operação de captura.", 200, 1);
+				////displayText(3, "\aBig Foot do pelotão Aranha reportando ao HQ\nO fugitivo procurado foi localizado.\nIniciando operação de captura.", 300, 1);
+				//strcpy_s(TextBuffer, "\aBig Foot do pelotão Aranha reportando ao HQ\nO fugitivo procurado foi localizado.\nIniciando operação de captura.");
+				//WaitFrameGUN = 1;
 				//break;
 			//case 2092:
-				//displayText(3, "\aEntendido.", 60, 1);
+			//	displayText(3, "\aEntendido.", 60, 1);
 				//break;
 			//case 2093:
-				//displayText(3, "\aBig Foot reportando ao HQ! Estou em combate\ncom o fugitivo mencionado! Solicito reforços\ncom urgência!", 102, 1);
+				//strcpy_s(TextBuffer, "\aBig Foot reportando ao HQ! Estou em combate\ncom o fugitivo mencionado! Solicito reforços\ncom urgência!");
+				//WaitFrameGUN = 1;
 				//break;
 			//case 2094:
 				//displayText(3, "\aDe..derrotado por um único ouriço...", 102, 1);
@@ -1385,7 +1934,17 @@ extern "C"
 			displayText(3, "\aI'm sorry... Sonic...", 140, 1);
 			break;
 		case 2274:
-			displayText(3, "\aI'll show you the true\npower of the Cyclone!", 120, 1);
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aI'll show you the true\npower of the Cyclone!");
+				WaitFrameIntro = 1;
+			}
+			else
+			{
+				displayText(3, "\aI'll show you the true\npower of the Cyclone!", 120, 1);
+			}
 			break;
 		case 2275:
 			displayText(3, "\aTake this!!", 60, 1);
@@ -1393,17 +1952,24 @@ extern "C"
 		case 2276:
 			displayText(3, "\aIt's not over yet, Eggman!", 120, 1);
 			break;
+		case 2284://Rouge Alt Intro
+			if (TwoPlayerMode)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aIt's nice to have these kinds\nof things once in a while.");
+				WaitFrameIntro = 1;
+			}
+			else
+			{
+				displayText(3, "\aIt's nice to use these kinds\nof things once in a while.", 100, 1);
+			}
+			break;
 		case 1480:
 			displayText(3, "\aHow could the Master Emerald pieces\nend up in a place like this...?", 230, 1);
 			break;
 		case 1481:
 			displayText(3, "\aI should make good use of\nthe different water levels.", 120, 1);
-			break;
-		case 2683:
-			displayText(3, "\aIt's my turn!", 60, 1);
-			break;
-		case 2724:
-			displayText(3, "\aI am Tikal.", 60, 1);
 			break;
 		case 1695:
 			displayText(3, "\aAlright, Cyclone engaged!", 100, 1);
@@ -1413,195 +1979,417 @@ extern "C"
 			break;
 
 			//OMOCHAO BULLY LINES
-/*
-		case 1349:
-			displayText(3, "\aOuch!", 30, 1);
-			break;
-		case 1350:
-			displayText(3, "\aOof!", 30, 1);
-			break;
-		case 1351:
-			displayText(3, "\aHuh!?", 30, 1);
-			break;
-		case 1352:
-			displayText(3, "\aOugh!", 100, 1);
-			break;
+
+		//case 1349:
+			//displayText(3, "\aOuch!", 30, 1);
+			//break;
+		//case 1350:
+			//displayText(3, "\aOof!", 30, 1);
+			//break;
+		//case 1351:
+			//displayText(3, "\aHuh!?", 30, 1);
+			//break;
+		//case 1352:
+			//displayText(3, "\aOugh!", 100, 1);
+			//break;
 		case 1353:
-			displayText(3, "\aT-That hurt... Why are bullying me?\nI'm not doing anything wrong...\nI'm done with this... I'm going home.", 480, 1);
+			strcpy_s(TextBuffer, "\aT-That hurt... Why are bullying me?\nI'm not doing anything wrong...\nI'm done with this... I'm going home.");
+			WaitFrameOmochao = 1;
 			break;
 		case 1354:
-			displayText(3, "\aIt hurts! That hurt a lot! I'm angry!\nI'm no longer gonna teach you anything!\nHumph!", 380, 1);
+			strcpy_s(TextBuffer, "\aIt hurts! That hurt a lot! I'm angry!\nI'm no longer gonna teach you anything!\nHumph!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1355:
-			displayText(3, "\aOuch.... Seriously, what are you doing?\nI can't believe you did this.\nI guess looks can be deceiving.", 480, 1);
+			strcpy_s(TextBuffer, "\aOuch.... Seriously, what are you doing?\nI can't believe you did this.\nI guess looks can be deceiving.");
+			WaitFrameOmochao = 1;
 			break;
 		case 1356:
-			displayText(3, "\aW-What!? What happened?\n Who am I? Where am I?", 320, 1);
+			strcpy_s(TextBuffer, "\aW-What!? What happened?\nWho am I? Where am I?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1357:
-			displayText(3, "\aAhh! Stop it! Let me go!", 140, 1);
+			strcpy_s(TextBuffer, "\aAhh! Stop it! Let me go!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1358:
-			displayText(3, "\aWow, hey! Stop with that!", 100, 1);
+			strcpy_s(TextBuffer, "\aWow, hey! Stop with that!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1359:
-			displayText(3, "\aPlease! Please let me go!", 180, 1);
+			strcpy_s(TextBuffer, "\aPlease! Please let me go!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1360:
-			displayText(3, "\aWhat are you doing!? I don't taste good\nregardless if I'm boiled or toasted!", 230, 1);
+			strcpy_s(TextBuffer, "\aWhat are you doing!? I don't taste good\nregardless if I'm boiled or toasted!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1361:
-			displayText(3, "\aAh! Hey! Somebody help me!", 150, 1);
+			strcpy_s(TextBuffer, "\aAh! Hey! Somebody help me!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1362:
-			displayText(3, "\aI-I'm here to give hints to you!\nI'm not the enemy!", 260, 1);
+			strcpy_s(TextBuffer, "\aI-I'm here to give hints to you!\nI'm not the enemy!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1363:
-			displayText(3, "\aSorry, my bad! I get it!\nI won't wet my bed anymore!", 190, 1);
+			strcpy_s(TextBuffer, "\aSorry, my bad! I get it!\nI won't wet my bed anymore!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1364:
-			displayText(3, "\aC-Could you stop with this thing of\nthrowing me to destroy the enemy?", 200, 1);
+			strcpy_s(TextBuffer, "\aC-Could you stop with this thing of\nthrowing me to destroy the enemy?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1365:
-			displayText(3, "\aS-Somebody! Somebody help!\nI'm being kidnapped!!", 190, 1);
+			strcpy_s(TextBuffer, "\aS-Somebody! Somebody help!\nI'm being kidnapped!!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1366:
-			displayText(3, "\aI'll get angry if you don't stop\nwith that! I'm gonna tell mommy!", 230, 1);
+			strcpy_s(TextBuffer, "\aI'll get angry if you don't stop\nwith that! I'm gonna tell mommy!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1367:
-			displayText(3, "\aWhew... Thank goodness...\nThat was unexpected.", 190, 1);
+			strcpy_s(TextBuffer, "\aWhew... Thank goodness...\nThat was unexpected.");
+			WaitFrameOmochao = 1;
 			break;
 		case 1368:
-			displayText(3, "\aEnough of this! What's this all\nabout!? I won't forgive you!", 100, 1);
+			strcpy_s(TextBuffer, "\aEnough of this! What's this all\nabout!? I won't forgive you!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1369:
-			displayText(3, "\aMy goodness, what a surprise.\nI ended up forgetting the hint...", 190, 1);
+			strcpy_s(TextBuffer, "\aMy goodness, what a surprise.\nI ended up forgetting the hint...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1370:
-			displayText(3, "\aThanks for hugging me! Even\nthough it was quite rough!", 230, 1);
+			strcpy_s(TextBuffer, "\aThanks for hugging me! Even\nthough it was quite rough!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1371:
-			displayText(3, "\aStoooop!", 70, 1);
+			strcpy_s(TextBuffer, "\aStoooop!");
+			WaitFrameOmochao = 1;
 			break;
-		case 1372:
-			displayText(3, "\aAhhhh...!", 70, 1);
-			break;
+		//case 1372:
+			//strcpy_s(TextBuffer, "\aAhhhh...!");
+			//WaitFrameOmochao = 1;
+			//break;
 		case 1373:
-			displayText(3, "\aHelp meeee!!", 80, 1);
+			strcpy_s(TextBuffer, "\aHelp meeee!!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1374:
-			displayText(3, "\aSee you later...!", 70, 1);
+			strcpy_s(TextBuffer, "\aSee you later...!");
+			WaitFrameOmochao = 1;
 			break;
 			
 		case 1389:
-			displayText(3, "\aHigh, so hiiigh! But this isn't\nthe time to be playing around!", 200, 1);
+			strcpy_s(TextBuffer, "\aHigh, so hiiigh! But this isn't\nthe time to be playing around!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1390:
-			displayText(3, "\aWow wow wow! That was quite scary!", 190, 1);
+			strcpy_s(TextBuffer, "\aWow wow wow! That was quite scary!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1391:
-			displayText(3, "\aWaaaaahh! D-Did I fly!?", 180, 1);
+			strcpy_s(TextBuffer, "\aWaaaaahh! D-Did I fly!?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1392:
-			displayText(3, "\aWoohoo! It's like a trampolim!", 130, 1);
+			strcpy_s(TextBuffer, "\aWoohoo! It's like a trampolim!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1393:
-			displayText(3, "\aWait up, where the heck are\nyou planning to take me to?", 190, 1);
+			strcpy_s(TextBuffer, "\aWait up, where the heck are\nyou planning to take me to?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1394:
-			displayText(3, "\aAaaw, how did I end up\nin such place...", 240, 1);
+			strcpy_s(TextBuffer, "\aAaaw, how did I end up\nin such place...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1395:
-			displayText(3, "\aI would love if you\njust let me go home...", 130, 1);
+			strcpy_s(TextBuffer, "\aI would love if you\njust let me go home...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1396:
-			displayText(3, "\aN-No way, are you planning to\nclear the stage like this!?", 190, 1);
+			strcpy_s(TextBuffer, "\aN-No way, are you planning to\nclear the stage like this!?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1397:
-			displayText(3, "\aOuch...! Even I got damaged!\nHumph!", 240, 1);
+			strcpy_s(TextBuffer, "\aOuch...! Even I got damaged!\nHumph!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1398:
-			displayText(3, "\aOuch ouch... Why even I get\nto go through such thing...?", 200, 1);
+			strcpy_s(TextBuffer, "\aOuch ouch... Why even I get\nto go through such thing...?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1399:
-			displayText(3, "\aB-But I haven't done anything wrong! Y-You're so cruel!", 300, 1);
+			strcpy_s(TextBuffer, "\aB-But I haven't done anything wrong! Y-You're so cruel!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1400:
-			displayText(3, "\aIt's hurting! Chao Doctor, help me!!", 250, 1);
+			strcpy_s(TextBuffer, "\aIt's hurting! Chao Doctor, help me!!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1401:
-			displayText(3, "\aWhew... That big truck\ngot　me by surprise!", 250, 1);
+			strcpy_s(TextBuffer, "\aWhew... That big truck\ngot　me by surprise!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1402:
-			displayText(3, "\aClearing the stage while holding me...\nGeez, what were you thinking...", 300, 1);
+			strcpy_s(TextBuffer, "\aClearing the stage while holding me...\nGeez, what were you thinking...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1403:
-			displayText(3, "\aThere is nothing but sea as far as\nthe eyes can see! Where is my home!?", 200, 1);
+			strcpy_s(TextBuffer, "\aThere is nothing but sea as far as\nthe eyes can see! Where is my home!?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1404:
-			displayText(3, "\aI'm also escaping before\nthe island blows up!", 180, 1);
+			strcpy_s(TextBuffer, "\aI'm also escaping before\nthe island blows up!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1405:
-			displayText(3, "\aThose pumpkin ghosts are scary!", 140, 1);
+			strcpy_s(TextBuffer, "\aThose pumpkin ghosts are scary!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1406:
-			displayText(3, "\aDid I get rusty after I got wet?", 120, 1);
+			strcpy_s(TextBuffer, "\aDid I get rusty after I got wet?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1407:
-			displayText(3, "\aWow, that was scary. I'll\nget back home and watch TV.", 200, 1);
+			strcpy_s(TextBuffer, "\aWow, that was scary. I'll\nget back home and watch TV.");
+			WaitFrameOmochao = 1;
 			break;
 		case 1408:
-			displayText(3, "\aI-I'm lost! Somebody help me!", 240, 1);
+			strcpy_s(TextBuffer, "\aI-I'm lost! Somebody help me!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1409:
-			displayText(3, "\aHow can I fly even in space...?\nOh well!", 240, 1);
+			strcpy_s(TextBuffer, "\aHow can I fly even in space...?\nOh well!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1410:
-			displayText(3, "\aAnyway, this room kinda\nlooks like a game.", 180, 1);
+			strcpy_s(TextBuffer, "\aAnyway, this room kinda\nlooks like a game.");
+			WaitFrameOmochao = 1;
 			break;
 		case 1411:
-			displayText(3, "\aI'm going back to that planet!\nSee you later!", 200, 1);
+			strcpy_s(TextBuffer, "\aI'm going back to that planet!\nSee you later!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1412:
-			displayText(3, "\aWell then, I'll go play\nwith the turtle.", 190, 1);
+			strcpy_s(TextBuffer, "\aWell then, I'll go play\nwith the turtle.");
+			WaitFrameOmochao = 1;
 			break;
 		case 1413:
-			displayText(3, "\aI-I'm dizzy...", 130, 1);
+			strcpy_s(TextBuffer, "\aI-I'm dizzy...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1414:
-			displayText(3, "\aAlright, I have to go return\nwithout being found by that robot...", 200, 1);
+			strcpy_s(TextBuffer, "\aAlright, I have to go return\nwithout being found by that robot...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1415:
-			displayText(3, "\aPlease get me out of this safe too!", 120, 1);
+			strcpy_s(TextBuffer, "\aPlease get me out of this safe too!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1416:
-			displayText(3, "\aThe fog here is like San Francisco's...", 190, 1);
+			strcpy_s(TextBuffer, "\aThe fog here is like San Francisco's...");
+			WaitFrameOmochao = 1;
 			break;
 		case 1417:
-			displayText(3, "\aOh, it's already this late!\nI gotta go to the Kindergarden!", 200, 1);
+			strcpy_s(TextBuffer, "\aOh, it's already this late!\nI gotta go to the Kindergarden!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1418:
-			displayText(3, "\aGood children don't lie!", 160, 1);
+			strcpy_s(TextBuffer, "\aGood children don't lie!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1419:
-			displayText(3, "\aWith my propeller I can fly\neven in space! ...Why though??", 100, 1);
+			strcpy_s(TextBuffer, "\aWith my propeller I can fly\neven in space! ...Why though??");
+			WaitFrameOmochao = 1;
 			break;
 		case 1420:
-			displayText(3, "\aThis is my first time here!\nI'll go sightseeing!", 180, 1);
+			strcpy_s(TextBuffer, "\aThis is my first time here!\nI'll go sightseeing!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1421:
-			displayText(3, "\aOh, my spring is about to run out!\nCould you wind it up on my back?", 300, 1);
+			strcpy_s(TextBuffer, "\aOh, my spring is about to run out!\nCould you wind it up on my back?");
+			WaitFrameOmochao = 1;
 			break;
 		case 1422:
-			displayText(3, "\aOkay, I get it! Whether you want to boil\nme or toast me, do whatever you want!", 250, 1);
+			strcpy_s(TextBuffer, "\aOkay, I get it! Whether you want to boil\nme or toast me, do whatever you want!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1423:
-			displayText(3, "\aIf you don't stop with that I'll tell\nto the Kindergarden's Principal!", 100, 1);
+			strcpy_s(TextBuffer, "\aIf you don't stop with that I'll tell\nto the Kindergarden's Principal!");
+			WaitFrameOmochao = 1;
 			break;
 		case 1424:
-			displayText(3, "\aHey, do you know how many of\nme there are? If you let me\ngo I'll tell you!", 360, 1);
+			strcpy_s(TextBuffer, "\aHey, do you know how\nmany of me there are?\nIf you let me go I'll tell you!");
+			WaitFrameOmochao = 1;
 			break;
-			*/
+			
+		case 2663:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aHow does it feel to see Amy Rose\nin all her splendor?");
+			WaitFrameIntroAmy = 1;
+			break;
+		case 2664:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aJust get out of my way!");
+			WaitFrameWaza = 1;
+			break;
+		case 2668:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aYou're not Sonic!\nWho are you?");
+			WaitFrameIntroAmy = 1;
+			break;
+		case 2669:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aCome on! I'm always\nthe odd one out!");
+			WaitFrameIntroAmy = 1;
+			break;
+		case 2670:
+			SplitScreenControl = 1;
+			displayText(3, "\aWell done!", 180, 1);
+			break;
+		case 2671:
+			displayText(3, "\aI've collected many rings already!", 30, 1);
+			break;
+		case 2672:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aJust wait a minute.");
+			WaitFrameWaza = 1;
+			break;
+		case 2673:
+			SplitScreenControl = 1;
+			displayText(3, "\aMy name is Amy Rose!", 180, 1);
+			break;
+		case 2678:
+			SplitScreenControl = 1;
+			displayText(3, "\aI did it!", 180, 1);
+			break;
+		case 2679:
+			SplitScreenControl = 1;
+			displayText(3, "\aYaaay! I did it!", 180, 1);
+			break;
+		case 2680:
+			SplitScreenControl = 1;
+			displayText(3, "\aSee, I can get things\ndone when it needs to!", 180, 1);
+			break;
+		case 2681:
+			SplitScreenControl = 1;
+			displayText(3, "\aOh my...! I'm the best!", 180, 1);
+			break;
+		case 2682:
+			SplitScreenControl = 1;
+			displayText(3, "\aAhhh... so boring...", 180, 1);
+			break;
+		case 2683:
+			displayText(3, "\aIt's my turn!", 60, 1);
+			break;
+		case 2684:
+			if (Timer < 100)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\aHere I go!");
+				WaitFrameIntroAmy = 1;
+			}
+			else
+			{
+				displayText(3, "\aHere I go!", 30, 1);
+			}
+			break;
+		case 2685:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI'm getting quite excited!");
+			WaitFrameIntroAmy = 1;
+			break;
+		case 2686:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aSonic... I'll do my best!");
+			WaitFrameIntroAmy = 1;
+			break;
+		case 2689://Chaos Zero Intro
+			if (MenuOrGame != 0)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\a");
+				WaitFrameIntroChao = 1;
+			}
+			break;
+		case 2699://Chao Walker Intro
+			if (MenuOrGame != 0)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\a");
+				WaitFrameIntroChao = 1;
+			}
+			break;
+		case 2710://Dark Chao Walker Intro
+			if (MenuOrGame != 0)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\a");
+				WaitFrameIntroChao = 1;
+			}
+			break;
+		case 2715://Metal Intro
+			if (MenuOrGame != 0)
+			{
+				HudControl = 0;
+				SplitScreenControl = 1;
+				strcpy_s(TextBuffer, "\a");
+				WaitFrameIntroChao = 1;
+			}
+			break;
+		case 2716:
+			SplitScreenControl = 1;
+			displayText(3, "\aI finally got the emerald.", 180, 1);
+			break;
+		case 2720:
+			displayText(3, "\aHere it is.", 30, 1);
+			break;
+		case 2721:
+			displayText(3, "\aI'm sorry.", 30, 1);
+			break;
+		case 2722:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aDon't come any closer!");
+			WaitFrameWaza = 1;
+			break;
+		case 2723:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aStop.");
+			WaitFrameWaza = 1;
+			break;
+		case 2724:
+			displayText(3, "\aI am Tikal.", 60, 1);
+			break;
+		case 2725:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI must find the emerald.");
+			WaitFrameIntro = 1;
+			break;
+		case 2726:
+			HudControl = 0;
+			SplitScreenControl = 1;
+			strcpy_s(TextBuffer, "\aI've got to do something...!");
+			WaitFrameIntro = 1;
+			break;
+
+
 		}
 		return num;
 	}
@@ -1631,11 +2419,17 @@ extern "C"
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
 		{
+		//Ippan-tekina intro
 			if (WaitFrameIntro > 0)
 				if (WaitFrameIntro++ > 121)
 				{
 					HudControl = 1;
 					SplitScreenControl = 2;
+					if (CurrentLevel == 15 || CurrentLevel == 39 || CurrentLevel == 45 || CurrentLevel == 48 || CurrentLevel == 53 || CurrentLevel == 58)
+					{
+						SplitScreenControl = 1;
+						HudControl = 0;
+					}
 					WaitFrameIntro = 0;
 				}		
 		}
@@ -1645,14 +2439,57 @@ extern "C"
 		}
 
 
+		//Chao, Metal, Chaos Intro
+		if (WaitFrameIntroChao > 0)
+		{
+			if (WaitFrameIntroChao++ > 121)
+			{
+				HudControl = 1;
+				SplitScreenControl = 2;
+				if (CurrentLevel == 15 || CurrentLevel == 39 || CurrentLevel == 45 || CurrentLevel == 48 || CurrentLevel == 53 || CurrentLevel == 58)
+				{
+					SplitScreenControl = 1;
+					HudControl = 0;
+				}
+				WaitFrameIntroChao = 0;
+			}
+		}
+		if (WaitFrameIntroChao > 1 && WaitFrameIntroChao < 121)
+		{
+			displayText(5, TextBuffer, 1, 1);
+		}
+		//Amy Intro
+		if (WaitFrameIntroAmy > 0)
+		{
+			if (WaitFrameIntroAmy++ > 181)
+			{
+				HudControl = 1;
+				SplitScreenControl = 2;
+				if (CurrentLevel == 15 || CurrentLevel == 39 || CurrentLevel == 45 || CurrentLevel == 48 || CurrentLevel == 53 || CurrentLevel == 58)
+				{
+					SplitScreenControl = 1;
+					HudControl = 0;
+				}
+				WaitFrameIntroAmy = 0;
+			}		
+		}
+		if (WaitFrameIntroAmy > 1 && WaitFrameIntroAmy < 181)
+		{
+			displayText(3, TextBuffer, 1, 1);
+		}
 
 
-
+		//Waza Knuckles, Rouge, Sonic, Tails, Eggman
 			if (WaitFrameWaza > 0)
 				if (WaitFrameWaza++ > 64)
 				{
 					HudControl = 1;
 					SplitScreenControl = 2;
+					if (CurrentLevel == 15 || CurrentLevel == 39 || CurrentLevel == 45 || CurrentLevel == 48 || CurrentLevel == 53 || CurrentLevel == 58)
+					{
+						SplitScreenControl = 1;
+						HudControl = 0;
+					}
 					WaitFrameWaza = 0;
 				}
 		if (WaitFrameWaza > 1 && WaitFrameWaza < 64)
@@ -1660,6 +2497,58 @@ extern "C"
 			displayText(3, TextBuffer, 1, 1);
 		}
 
+		//Waza Shadow
+		if (WaitFrameWaza2 > 0)
+			if (WaitFrameWaza2++ > 50)
+			{
+				HudControl = 1;
+				SplitScreenControl = 2;
+				if (CurrentLevel == 15 || CurrentLevel == 39 || CurrentLevel == 45 || CurrentLevel == 48 || CurrentLevel == 53 || CurrentLevel == 58)
+				{
+					SplitScreenControl = 1;
+				}
+				WaitFrameWaza2 = 0;
+			}
+		if (WaitFrameWaza2 > 1 && WaitFrameWaza2 < 50)
+		{
+			displayText(3, TextBuffer, 1, 1);
+		}
+
+
+		//WazaBoss Knuckles, Rouge, Sonic, Tails, Eggman
+		if (WaitFrameWaza1P > 0)
+			if (WaitFrameWaza1P++ > 64)
+			{
+				WaitFrameWaza1P = 0;
+			}
+		if (WaitFrameWaza1P > 1 && WaitFrameWaza1P < 64)
+		{
+			displayText(3, TextBuffer, 1, 1);
+		}
+		//Waza Shadow (because animation is faster)
+		if (WaitFrameWaza21P > 0)
+			if (WaitFrameWaza21P++ > 50)
+			{
+				WaitFrameWaza21P = 0;
+			}
+		if (WaitFrameWaza21P > 1 && WaitFrameWaza21P < 50)
+		{
+			displayText(3, TextBuffer, 1, 1);
+		}
+
+
+
+
+		//WaitFrameOmochao Lines
+		if (WaitFrameOmochao > 0)
+			if (WaitFrameOmochao++ > 180)
+			{
+				WaitFrameOmochao = 0;
+			}
+		if (WaitFrameOmochao > 1 && WaitFrameOmochao < 180)
+		{
+			displayText(3, TextBuffer, 1, 1);
+		}
 
 		// Executed every running frame of SA2
 	}
